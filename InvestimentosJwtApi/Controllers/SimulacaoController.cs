@@ -21,6 +21,15 @@ public class SimulacaoController : ControllerBase
         _telemetriaService = telemetriaService;
     }
 
+    /// <summary>
+    /// Realiza a simulação de um investimento com base nos parâmetros informados. 
+    /// </summary> 
+    /// <param name="request">Objeto contendo ClienteId, Valor, PrazoMeses e TipoProduto.</param> 
+    /// <returns>Retorna o produto validado e o resultado da simulação.</returns> 
+    /// <response code="200">Simulação realizada com sucesso.</response> 
+    /// <response code="400">Dados inválidos para simulação.</response> 
+    /// <response code="404">Produto não encontrado.</response>
+    /// <response code="500">Erro interno ao realizar a simulação.</response>
     [HttpPost("simular-investimento")]
     public async Task<IActionResult> SimularInvestimento([FromBody] SimulacaoRequest request)
     {
@@ -48,6 +57,11 @@ public class SimulacaoController : ControllerBase
         }
     }
 
+    /// <summary>
+    /// Retorna todas as simulações realizadas.
+    /// </summary>
+    /// <response code="200">Lista de simulações retornada com sucesso.</response>
+    /// <response code="500">Erro interno ao buscar as simulações.</response>
     [HttpGet("simulacoes")]
     public async Task<IActionResult> GetSimulacoes()
     {
@@ -72,6 +86,11 @@ public class SimulacaoController : ControllerBase
         }
     }
 
+    /// <summary>
+    /// Retorna agregação de simulações por produto e dia.
+    /// </summary>
+    /// <response code="200">Agregação retornada com sucesso.</response>
+    /// <response code="500">Erro interno ao buscar agregação.</response>
     [HttpGet("simulacoes/por-produto-dia")]
     public async Task<IActionResult> GetSimulacoesPorProdutoDia()
     {
