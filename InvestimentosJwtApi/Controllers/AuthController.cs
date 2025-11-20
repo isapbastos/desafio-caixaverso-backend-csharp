@@ -1,4 +1,4 @@
-﻿using InvestimentosCaixa.Api.DTOs;
+using InvestimentosCaixa.Api.DTOs;
 using InvestimentosJwt.Domain.Entities;
 using InvestimentosJwt.Infra.Data.Sql;
 using Microsoft.AspNetCore.Mvc;
@@ -24,25 +24,47 @@ public class AuthController : ControllerBase
         _configuration = configuration;
     }
 
-    [HttpPost("register")]
+    /// <summary>
+    /// Registra um novo usuário no sistema.
+    /// </summary>
+    /// <param name="dto">Dados do usuário: email e senha.</param>
+    /// <returns>Usuário criado.</returns>
+    [HttpPost("registrar")]
+    [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> Register([FromBody] RegisterDto dto)
     {
         if (await _db.Users.AnyAsync(u => u.Email == dto.Email))
-            return BadRequest("Email already registered.");
+            return BadRequest("Email já registrado.");
 
         var user = new User { Email = dto.Email, Password = dto.Password };
+
         _db.Users.Add(user);
         await _db.SaveChangesAsync();
+
         return Ok(new { user.Id, user.Email });
     }
 
+    /// <summary>
+    /// Autentica um usuário e retorna um token JWT válido.
+    /// </summary>
+    /// <param name="dto">Email e senha do usuário.</param>
+    /// <returns>Token JWT e data de expiração.</returns>
     [HttpPost("login")]
+    [ProducesResponseType(typeof(AuthResponseDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> Login([FromBody] LoginDto dto)
     {
         var user = await _db.Users.FirstOrDefaultAsync(u => u.Email == dto.Email && u.Password == dto.Password);
-        if (user == null) return Unauthorized("Invalid credentials.");
+
+        if (user == null)
+            return Unauthorized("Invalid credentials.");
 
         var jwt = _configuration.GetSection("Jwt");
+
         var key = jwt["Key"]!;
         var issuer = jwt["Issuer"]!;
         var audience = jwt["Audience"]!;
@@ -67,6 +89,10 @@ public class AuthController : ControllerBase
 
         var tokenStr = new JwtSecurityTokenHandler().WriteToken(token);
 
-        return Ok(new AuthResponseDto { Token = tokenStr, ExpiresAt = token.ValidTo });
+        return Ok(new AuthResponseDto
+        {
+            Token = tokenStr,
+            ExpiresAt = token.ValidTo
+        });
     }
 }
