@@ -15,3 +15,4 @@ C:\Users\isa_p\source\repos\InvestimentosJwtApi\InvestimentosJwt.Application\bin
 C:\Users\isa_p\source\repos\InvestimentosJwtApi\InvestimentosJwt.Application\bin\Debug\net8.0\InvestimentosJwt.Infra.Data.pdb
 C:\Users\isa_p\source\repos\InvestimentosJwtApi\InvestimentosJwt.Application\obj\Debug\net8.0\InvestimentosJwt.Application.csproj.AssemblyReference.cache
 C:\Users\isa_p\source\repos\InvestimentosJwtApi\InvestimentosJwt.Application\obj\Debug\net8.0\Investim.FEFB96C0.Up2Date
+C:\Users\isa_p\source\repos\InvestimentosJwtApi\InvestimentosJwt.Application\obj\Debug\net8.0\InvestimentosJwt.Application.sourcelink.json

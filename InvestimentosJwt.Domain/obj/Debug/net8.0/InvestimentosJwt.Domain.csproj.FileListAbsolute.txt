@@ -9,3 +9,4 @@ C:\Users\isa_p\source\repos\InvestimentosJwtApi\InvestimentosJwt.Domain\obj\Debu
 C:\Users\isa_p\source\repos\InvestimentosJwtApi\InvestimentosJwt.Domain\obj\Debug\net8.0\refint\InvestimentosJwt.Domain.dll
 C:\Users\isa_p\source\repos\InvestimentosJwtApi\InvestimentosJwt.Domain\obj\Debug\net8.0\InvestimentosJwt.Domain.pdb
 C:\Users\isa_p\source\repos\InvestimentosJwtApi\InvestimentosJwt.Domain\obj\Debug\net8.0\ref\InvestimentosJwt.Domain.dll
+C:\Users\isa_p\source\repos\InvestimentosJwtApi\InvestimentosJwt.Domain\obj\Debug\net8.0\InvestimentosJwt.Domain.sourcelink.json

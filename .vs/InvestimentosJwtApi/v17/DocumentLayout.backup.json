@@ -3,16 +3,16 @@
   "WorkspaceRootPath": "C:\\Users\\isa_p\\source\\repos\\InvestimentosJwtApi\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{EF9B9A2A-220F-49BD-A9D2-E87599696574}|InvestimentosJwtApi\\InvestimentosJwtApi.csproj|c:\\users\\isa_p\\source\\repos\\investimentosjwtapi\\investimentosjwtapi\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{EF9B9A2A-220F-49BD-A9D2-E87599696574}|InvestimentosJwtApi\\InvestimentosJwtApi.csproj|solutionrelative:investimentosjwtapi\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{EF9B9A2A-220F-49BD-A9D2-E87599696574}|InvestimentosJwtApi\\InvestimentosJwtApi.csproj|c:\\users\\isa_p\\source\\repos\\investimentosjwtapi\\investimentosjwtapi\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
       "RelativeMoniker": "D:0:0:{EF9B9A2A-220F-49BD-A9D2-E87599696574}|InvestimentosJwtApi\\InvestimentosJwtApi.csproj|solutionrelative:investimentosjwtapi\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{EF9B9A2A-220F-49BD-A9D2-E87599696574}|InvestimentosJwtApi\\InvestimentosJwtApi.csproj|c:\\users\\isa_p\\source\\repos\\investimentosjwtapi\\investimentosjwtapi\\dockerfile||{8B382828-6202-11D1-8870-0000F87579D2}",
       "RelativeMoniker": "D:0:0:{EF9B9A2A-220F-49BD-A9D2-E87599696574}|InvestimentosJwtApi\\InvestimentosJwtApi.csproj|solutionrelative:investimentosjwtapi\\dockerfile||{8B382828-6202-11D1-8870-0000F87579D2}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{EF9B9A2A-220F-49BD-A9D2-E87599696574}|InvestimentosJwtApi\\InvestimentosJwtApi.csproj|c:\\users\\isa_p\\source\\repos\\investimentosjwtapi\\investimentosjwtapi\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{EF9B9A2A-220F-49BD-A9D2-E87599696574}|InvestimentosJwtApi\\InvestimentosJwtApi.csproj|solutionrelative:investimentosjwtapi\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{615FFCDF-0817-48A0-B256-1D0D2AFC54C1}|InvestimentosJwt.Infra.Data\\InvestimentosJwt.Infra.Data.csproj|c:\\users\\isa_p\\source\\repos\\investimentosjwtapi\\investimentosjwt.infra.data\\sql\\appdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -194,7 +194,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 3,
+          "SelectedChildIndex": 10,
           "Children": [
             {
               "$type": "Bookmark",
@@ -226,16 +226,15 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 2,
               "Title": "Program.cs",
               "DocumentMoniker": "C:\\Users\\isa_p\\source\\repos\\InvestimentosJwtApi\\InvestimentosJwtApi\\Program.cs",
               "RelativeDocumentMoniker": "InvestimentosJwtApi\\Program.cs",
               "ToolTip": "C:\\Users\\isa_p\\source\\repos\\InvestimentosJwtApi\\InvestimentosJwtApi\\Program.cs",
               "RelativeToolTip": "InvestimentosJwtApi\\Program.cs",
-              "ViewState": "AgIAAHEAAAAAAAAAAAAuwHYAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAHEAAAAAAAAAAAAuwHsAAAAEAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-18T23:59:58.387Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-11-18T23:59:58.387Z"
             },
             {
               "$type": "Document",
@@ -287,16 +286,15 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 1,
               "Title": "Dockerfile",
               "DocumentMoniker": "C:\\Users\\isa_p\\source\\repos\\InvestimentosJwtApi\\InvestimentosJwtApi\\Dockerfile",
               "RelativeDocumentMoniker": "InvestimentosJwtApi\\Dockerfile",
               "ToolTip": "C:\\Users\\isa_p\\source\\repos\\InvestimentosJwtApi\\InvestimentosJwtApi\\Dockerfile",
               "RelativeToolTip": "InvestimentosJwtApi\\Dockerfile",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAACoAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAB4AAAAAAAAAAAAwwEAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
-              "WhenOpened": "2025-11-19T02:25:09.492Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-11-19T02:25:09.492Z"
             },
             {
               "$type": "Document",
@@ -312,13 +310,13 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 0,
               "Title": "appsettings.json",
               "DocumentMoniker": "C:\\Users\\isa_p\\source\\repos\\InvestimentosJwtApi\\InvestimentosJwtApi\\appsettings.json",
               "RelativeDocumentMoniker": "InvestimentosJwtApi\\appsettings.json",
               "ToolTip": "C:\\Users\\isa_p\\source\\repos\\InvestimentosJwtApi\\InvestimentosJwtApi\\appsettings.json",
               "RelativeToolTip": "InvestimentosJwtApi\\appsettings.json",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAAqAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAAvAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
               "WhenOpened": "2025-11-18T23:59:46.619Z",
               "EditorCaption": ""
@@ -477,8 +475,7 @@
               "RelativeToolTip": "InvestimentosJwtApi\\Controllers\\PerfilController.cs",
               "ViewState": "AgIAABAAAAAAAAAAAAAcwC8AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-19T01:55:13.754Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-11-19T01:55:13.754Z"
             },
             {
               "$type": "Document",

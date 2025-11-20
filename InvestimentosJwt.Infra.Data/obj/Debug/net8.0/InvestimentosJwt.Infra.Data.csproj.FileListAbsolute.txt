@@ -13,3 +13,4 @@ C:\Users\isa_p\source\repos\InvestimentosJwtApi\InvestimentosJwt.Infra.Data\obj\
 C:\Users\isa_p\source\repos\InvestimentosJwtApi\InvestimentosJwt.Infra.Data\obj\Debug\net8.0\refint\InvestimentosJwt.Infra.Data.dll
 C:\Users\isa_p\source\repos\InvestimentosJwtApi\InvestimentosJwt.Infra.Data\obj\Debug\net8.0\InvestimentosJwt.Infra.Data.pdb
 C:\Users\isa_p\source\repos\InvestimentosJwtApi\InvestimentosJwt.Infra.Data\obj\Debug\net8.0\ref\InvestimentosJwt.Infra.Data.dll
+C:\Users\isa_p\source\repos\InvestimentosJwtApi\InvestimentosJwt.Infra.Data\obj\Debug\net8.0\InvestimentosJwt.Infra.Data.sourcelink.json
