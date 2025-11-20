@@ -1,4 +1,4 @@
-﻿using InvestimentosCaixa.Api.Controllers;
+using InvestimentosCaixa.Api.Controllers;
 using InvestimentosCaixa.Api.DTOs;
 using InvestimentosJwt.Domain.Entities;
 using InvestimentosJwt.Infra.Data.Sql;
@@ -76,7 +76,7 @@ public class AuthControllerTests
         var resultado = await controller.Register(dto);
 
         var badRequest = Assert.IsType<BadRequestObjectResult>(resultado);
-        Assert.Equal("Email already registered.", badRequest.Value);
+        Assert.Equal("Email já registrado.", badRequest.Value);
     }
 
     // -------------------------
