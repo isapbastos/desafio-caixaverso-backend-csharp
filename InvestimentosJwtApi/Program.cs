@@ -25,7 +25,7 @@ var configuration = builder.Configuration;
 // Caminho do banco de dados
 var dbPath = Path.Combine(builder.Environment.ContentRootPath, "data", "app.db");
 
-// Cria a pasta se n„o existir
+// Cria a pasta se n√£o existir
 Directory.CreateDirectory(Path.GetDirectoryName(dbPath)!);
 
 // Configura DbContext
@@ -33,11 +33,6 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite($"Data Source={dbPath}",
     x => x.MigrationsAssembly("InvestimentosJwt.Infra.Data")
     ));
-//builder.Services.AddDbContext<AppDbContext>(options =>
-//options.UseSqlite(
-//        configuration.GetConnectionString("DefaultConnection"),
-//        x => x.MigrationsAssembly("InvestimentosJwt.Infra.Data")
-//    ));
 
 // ------------------------------
 // DEPENDENCY INJECTION
@@ -99,7 +94,7 @@ builder.Services.AddSwaggerGen(c =>
         Version = "v1"
     });
 
-    // Carregar documentaÁ„o XML
+    // Carregar documenta√ß√£o XML
     var xmlFile = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml";
     var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
     if (File.Exists(xmlPath))
