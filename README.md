@@ -30,8 +30,8 @@ Tecnologias utilizadas:
 
 ### **Local**
 ```bash
-git clone https://github.com/isapbastos/Desafio-backend-net.git
-cd Desafio-backend-net
+git clone https://github.com/isapbastos/desafio-caixaverso-backend-csharp.git
+cd desafio-caixaverso-backend-csharp
 dotnet restore
 dotnet run
 ```
