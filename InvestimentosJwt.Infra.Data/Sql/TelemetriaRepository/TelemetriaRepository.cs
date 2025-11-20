@@ -1,4 +1,5 @@
 ﻿using InvestimentosJwt.Domain.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace InvestimentosJwt.Infra.Data.Sql.TelemetriaRepository;
 public class TelemetriaRepository : ITelemetriaRepository
@@ -10,16 +11,17 @@ public class TelemetriaRepository : ITelemetriaRepository
         _context = context;
     }
 
-    public void AdicionarRegistro(TelemetriaRegistro registro)
+    public async Task AdicionarRegistro(TelemetriaRegistro registro)
     {
         _context.TelemetriaRegistros.Add(registro);
-        _context.SaveChanges();
+        await _context.SaveChangesAsync();
     }
 
-    public IEnumerable<TelemetriaRegistro> ObterDadosPorPeriodo(DateTime inicio, DateTime fim)
+    public async Task<IEnumerable<TelemetriaRegistro>> ObterDadosPorPeriodo(DateTime inicio, DateTime fim)
     {
-        return _context.TelemetriaRegistros
+        var resultado = await _context.TelemetriaRegistros
             .Where(r => r.DataRegistro >= inicio && r.DataRegistro <= fim)
-            .ToList();
+            .ToListAsync();
+        return resultado;
     }
 }

@@ -1,145 +1,128 @@
 ﻿using InvestimentosJwt.Application.SimulacaoService;
 using InvestimentosJwt.Application.SimulacaoService.Models;
+using InvestimentosJwt.Application.TelemetriaService;
 using InvestimentosJwt.Domain.Entities;
 using InvestimentosJwtApi.Controllers;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
-using Xunit;
 
+namespace InvestimentosJwt.Tests.Controllers;
 public class SimulacaoControllerTests
 {
-    private readonly Mock<ISimulacaoService> _simulacaoServiceMock;
-    private readonly SimulacaoController _controller;
-
-    public SimulacaoControllerTests()
-    {
-        _simulacaoServiceMock = new Mock<ISimulacaoService>();
-        _controller = new SimulacaoController(_simulacaoServiceMock.Object);
-    }
-
-    // ---------------------------------------------------------------------
-    // POST /simular-investimento
-    // ---------------------------------------------------------------------
     [Fact]
-    public async Task SimularInvestimento_DeveRetornarOk_QuandoSucesso()
+    public async Task SimularInvestimento_Sucesso_RetornaOkComDados()
     {
         // Arrange
+        var mockSimulacao = new Mock<ISimulacaoService>();
+        var mockTelemetria = new Mock<ITelemetriaService>();
+
         var request = new SimulacaoRequest
         {
-            ClienteId = 1,
-            Valor = 1000,
+            ClienteId = 123,
+            Valor = 10000,
             PrazoMeses = 12,
             TipoProduto = "CDB"
         };
 
-        var dadosResultado = new { ValorFinal = 1500m };
-
-        var retorno = RetornoSimulacao.SucessoRetorno(dadosResultado);
-
-        _simulacaoServiceMock
-            .Setup(s => s.RealizarSimulacao(request))
-            .ReturnsAsync(retorno);
-
-        // Act
-        var result = await _controller.SimularInvestimento(request);
-
-        // Assert
-        var ok = Assert.IsType<OkObjectResult>(result);
-        Assert.Equal(200, ok.StatusCode);
-        Assert.Equal(dadosResultado, ok.Value);
-    }
-
-    [Fact]
-    public async Task SimularInvestimento_DeveRetornarBadRequest_QuandoFalha()
-    {
-        // Arrange
-        var request = new SimulacaoRequest();
-
-        var retorno = RetornoSimulacao.Erro("Falha ao simular");
-
-        _simulacaoServiceMock
-            .Setup(s => s.RealizarSimulacao(request))
-            .ReturnsAsync(retorno);
-
-        // Act
-        var result = await _controller.SimularInvestimento(request);
-
-        // Assert
-        var badRequest = Assert.IsType<BadRequestObjectResult>(result);
-        Assert.Equal(400, badRequest.StatusCode);
-        Assert.Equal("Falha ao simular", badRequest.Value);
-    }
-
-    // ---------------------------------------------------------------------
-    // GET /simulacoes
-    // ---------------------------------------------------------------------
-    [Fact]
-    public async Task GetSimulacoes_DeveRetornarOk_ComListaDeSimulacoes()
-    {
-        // Arrange
-        var lista = new List<Simulacao>
-    {
-        new Simulacao
+        var retornoDados = new Simulacao
         {
             Id = 1,
-            ClienteId = 10,
-            Produto = "CDB",
-            ValorInvestido = 1000,
-            ValorFinal = 1100,
+            ClienteId = 123,
+            Produto = "CDB Caixa 2026",
+            ValorInvestido = 10000,
+            ValorFinal = 11200,
             PrazoMeses = 12,
-            DataSimulacao = DateTime.Now
-        },
-        new Simulacao
-        {
-            Id = 2,
-            ClienteId = 20,
-            Produto = "LCI",
-            ValorInvestido = 2000,
-            ValorFinal = 2300,
-            PrazoMeses = 24,
-            DataSimulacao = DateTime.Now
-        }
-    };
-
-        _simulacaoServiceMock
-            .Setup(s => s.ObterTodasSimulacoes())
-            .ReturnsAsync(lista);
-
-        // Act
-        var result = await _controller.GetSimulacoes();
-
-        // Assert
-        var ok = Assert.IsType<OkObjectResult>(result);
-        Assert.Equal(200, ok.StatusCode);
-
-        var retorno = Assert.IsAssignableFrom<IEnumerable<Simulacao>>(ok.Value);
-
-        Assert.Equal(2, retorno.Count());
-    }
-
-
-    // ---------------------------------------------------------------------
-    // GET /simulacoes/por-produto-dia
-    // ---------------------------------------------------------------------
-    [Fact]
-    public async Task GetSimulacoesPorProdutoDia_DeveRetornarOk()
-    {
-        // Arrange
-        var agregacao = new List<SimulacaoPorProdutoDiaDto>
-        {
-            new SimulacaoPorProdutoDiaDto { Produto = "CDB", QuantidadeSimulacoes = 3, MediaValorFinal = 1200 },
-            new SimulacaoPorProdutoDiaDto { Produto = "LCI", QuantidadeSimulacoes = 1, MediaValorFinal = 1600 }
+            DataSimulacao = DateTime.UtcNow
         };
 
-        _simulacaoServiceMock
-            .Setup(s => s.ObterSimulacoesPorProdutoDia())
-            .ReturnsAsync(agregacao);
+        mockSimulacao.Setup(s => s.RealizarSimulacao(request))
+            .ReturnsAsync(RetornoSimulacao.SucessoRetorno(retornoDados));
+
+        var controller = new SimulacaoController(mockSimulacao.Object, mockTelemetria.Object);
 
         // Act
-        var result = await _controller.GetSimulacoesPorProdutoDia();
+        var result = await controller.SimularInvestimento(request) as OkObjectResult;
 
         // Assert
-        var ok = Assert.IsType<OkObjectResult>(result);
-        Assert.Equal(agregacao, ok.Value);
+        Assert.NotNull(result);
+        Assert.Equal(retornoDados, result.Value);
+        mockTelemetria.Verify(t => t.RegistrarChamada("/api/Simulacao/simular-investimento", It.IsAny<long>()), Times.Once);
+    }
+
+    [Fact]
+    public async Task SimularInvestimento_Erro_RetornaBadRequest()
+    {
+        // Arrange
+        var mockSimulacao = new Mock<ISimulacaoService>();
+        var mockTelemetria = new Mock<ITelemetriaService>();
+
+        var request = new SimulacaoRequest { ClienteId = 123, Valor = 0, PrazoMeses = 12, TipoProduto = "CDB" };
+
+        mockSimulacao.Setup(s => s.RealizarSimulacao(request))
+            .ReturnsAsync(RetornoSimulacao.Erro("Valor inválido"));
+
+        var controller = new SimulacaoController(mockSimulacao.Object, mockTelemetria.Object);
+
+        // Act
+        var result = await controller.SimularInvestimento(request) as BadRequestObjectResult;
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal("Valor inválido", result.Value);
+        mockTelemetria.Verify(t => t.RegistrarChamada("/api/Simulacao/simular-investimento", It.IsAny<long>()), Times.Once);
+    }
+
+    [Fact]
+    public async Task GetSimulacoes_RetornaOkComLista()
+    {
+        // Arrange
+        var mockSimulacao = new Mock<ISimulacaoService>();
+        var mockTelemetria = new Mock<ITelemetriaService>();
+
+        var listaSimulacoes = new List<Simulacao>
+        {
+            new Simulacao { Id = 1, ClienteId = 123, Produto = "CDB Caixa 2026", ValorInvestido = 10000, ValorFinal = 11200, PrazoMeses = 12, DataSimulacao = DateTime.UtcNow },
+            new Simulacao { Id = 2, ClienteId = 124, Produto = "Fundo XPTO", ValorInvestido = 5000, ValorFinal = 5800, PrazoMeses = 6, DataSimulacao = DateTime.UtcNow }
+        };
+
+        mockSimulacao.Setup(s => s.ObterTodasSimulacoes()).ReturnsAsync(listaSimulacoes);
+
+        var controller = new SimulacaoController(mockSimulacao.Object, mockTelemetria.Object);
+
+        // Act
+        var result = await controller.GetSimulacoes() as OkObjectResult;
+
+        // Assert
+        Assert.NotNull(result);
+        var list = Assert.IsType<List<Simulacao>>(result.Value);
+        Assert.Equal(2, list.Count);
+        mockTelemetria.Verify(t => t.RegistrarChamada("/api/Simulacao/simulacoes", It.IsAny<long>()), Times.Once);
+    }
+
+    [Fact]
+    public async Task GetSimulacoesPorProdutoDia_RetornaOkComLista()
+    {
+        // Arrange
+        var mockSimulacao = new Mock<ISimulacaoService>();
+        var mockTelemetria = new Mock<ITelemetriaService>();
+
+        var listaAgregada = new List<SimulacaoPorProdutoDiaDto>
+        {
+            new SimulacaoPorProdutoDiaDto { Produto = "CDB Caixa 2026", Data = DateTime.UtcNow.Date, QuantidadeSimulacoes = 10, MediaValorFinal = 11050m }
+        };
+
+        mockSimulacao.Setup(s => s.ObterSimulacoesPorProdutoDia()).ReturnsAsync(listaAgregada);
+
+        var controller = new SimulacaoController(mockSimulacao.Object, mockTelemetria.Object);
+
+        // Act
+        var result = await controller.GetSimulacoesPorProdutoDia() as OkObjectResult;
+
+        // Assert
+        Assert.NotNull(result);
+        var list = Assert.IsType<List<SimulacaoPorProdutoDiaDto>>(result.Value);
+        Assert.Single(list);
+        Assert.Equal("CDB Caixa 2026", list[0].Produto);
+        mockTelemetria.Verify(t => t.RegistrarChamada("/api/Simulacao/simulacoes/por-produto-dia", It.IsAny<long>()), Times.Once);
     }
 }

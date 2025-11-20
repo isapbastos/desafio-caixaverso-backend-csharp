@@ -5,7 +5,7 @@ FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 WORKDIR /app
 
 # Criar pasta para SQLite com permissões corretas
-RUN mkdir -p /app/Data && chmod -R 777 /app/Data
+RUN mkdir -p /app/data && chmod -R 777 /app/data
 
 # Expor portas da API
 EXPOSE 8080

@@ -13,7 +13,7 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
     volumes:
       # Volume persistente para o SQLite
-      - sqlite_data:/app/Data
+      - ./data:/app/data
     restart: unless-stopped
 
 volumes:

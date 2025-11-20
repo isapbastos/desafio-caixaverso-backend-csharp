@@ -141,7 +141,7 @@ C:\Users\isa_p\source\repos\InvestimentosJwtApi\InvestimentosJwtApi\bin\Debug\ne
 C:\Users\isa_p\source\repos\InvestimentosJwtApi\InvestimentosJwtApi\bin\Debug\net8.0\InvestimentosJwt.Application.pdb
 C:\Users\isa_p\source\repos\InvestimentosJwtApi\InvestimentosJwtApi\bin\Debug\net8.0\InvestimentosJwt.Domain.pdb
 C:\Users\isa_p\source\repos\InvestimentosJwtApi\InvestimentosJwtApi\bin\Debug\net8.0\InvestimentosJwt.Infra.Data.pdb
-C:\Users\isa_p\source\repos\InvestimentosJwtApi\InvestimentosJwtApi\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt
 C:\Users\isa_p\source\repos\InvestimentosJwtApi\InvestimentosJwtApi\bin\Debug\net8.0\InvestimentosJwtApi.xml
 C:\Users\isa_p\source\repos\InvestimentosJwtApi\InvestimentosJwtApi\obj\Debug\net8.0\InvestimentosJwtApi.xml
 C:\Users\isa_p\source\repos\InvestimentosJwtApi\InvestimentosJwtApi\obj\Debug\net8.0\InvestimentosJwtApi.sourcelink.json
+C:\Users\isa_p\source\repos\InvestimentosJwtApi\InvestimentosJwtApi\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt

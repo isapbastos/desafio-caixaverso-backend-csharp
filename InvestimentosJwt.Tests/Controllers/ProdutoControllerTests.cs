@@ -1,88 +1,81 @@
-﻿
+﻿using Moq;
+using Microsoft.AspNetCore.Mvc;
 using InvestimentosJwt.Application.ProdutoService;
+using InvestimentosJwt.Application.TelemetriaService;
 using InvestimentosJwt.Domain.Entities;
 using InvestimentosJwtApi.Controllers;
-using Microsoft.AspNetCore.Mvc;
-using Moq;
 
 namespace InvestimentosJwt.Tests.Controllers;
+
 public class ProdutoControllerTests
 {
-    private readonly Mock<IProdutoService> _serviceMock;
-    private readonly ProdutoController _controller;
-
-    public ProdutoControllerTests()
-    {
-        _serviceMock = new Mock<IProdutoService>();
-        _controller = new ProdutoController(_serviceMock.Object);
-    }
-
-    private Produto CriarProduto(int id, string tipo)
-    {
-        return new Produto
-        {
-            Id = id,
-            Nome = $"Produto {id}",
-            Tipo = tipo,
-            Rentabilidade = 0.1m,
-            Risco = "Baixo"
-        };
-    }
-
-    // -------------------------------------------------------------------------
-    // GET /api/produto/produtos
-    // -------------------------------------------------------------------------
     [Fact]
-    public async Task GetProdutos_DeveRetornarOkComListaDeProdutos()
+    public async Task GetProdutos_DeveRetornarOkComLista()
     {
         // Arrange
-        var lista = new List<Produto>
+        var mockProdutoService = new Mock<IProdutoService>();
+        var mockTelemetria = new Mock<ITelemetriaService>();
+
+        var produtos = new List<Produto>
         {
-            CriarProduto(1, "CDB"),
-            CriarProduto(2, "LCI")
+            new Produto { Id = 1, Nome = "CDB Caixa 2026", Tipo = "CDB", Rentabilidade = 0.12m, Risco = "Baixo" },
+            new Produto { Id = 2, Nome = "Fundo XPTO", Tipo = "Fundo", Rentabilidade = 0.18m, Risco = "Alto" }
         };
 
-        _serviceMock
-            .Setup(s => s.ListarProdutos())
-            .ReturnsAsync(lista);
+        mockProdutoService.Setup(s => s.ListarProdutos()).ReturnsAsync(produtos);
+
+        var controller = new ProdutoController(mockProdutoService.Object, mockTelemetria.Object);
 
         // Act
-        var result = await _controller.GetProdutos();
+        var result = await controller.GetProdutos() as OkObjectResult;
 
         // Assert
-        var ok = Assert.IsType<OkObjectResult>(result);
-        Assert.Equal(lista, ok.Value);
-    }
-
-    // -------------------------------------------------------------------------
-    // GET /api/produto/produtos/{id}
-    // -------------------------------------------------------------------------
-    [Fact]
-    public async Task GetProduto_DeveRetornarOk_QuandoEncontrado()
-    {
-        var produto = CriarProduto(10, "CDB");
-
-        _serviceMock
-            .Setup(s => s.ObterProduto(10))
-            .ReturnsAsync(produto);
-
-        var result = await _controller.GetProduto(10);
-
-        var ok = Assert.IsType<OkObjectResult>(result);
-        Assert.Equal(produto, ok.Value);
+        Assert.NotNull(result);
+        var list = Assert.IsType<List<Produto>>(result.Value);
+        Assert.Equal(2, list.Count);
+        mockTelemetria.Verify(t => t.RegistrarChamada("/api/Produto/produtos", It.IsAny<long>()), Times.Once);
     }
 
     [Fact]
-    public async Task GetProduto_DeveRetornarNotFound_QuandoNaoExistir()
+    public async Task GetProduto_ProdutoExistente_DeveRetornarOk()
     {
-        _serviceMock
-            .Setup(s => s.ObterProduto(99))
-            .ReturnsAsync((Produto)null);
+        // Arrange
+        var mockProdutoService = new Mock<IProdutoService>();
+        var mockTelemetria = new Mock<ITelemetriaService>();
 
-        var result = await _controller.GetProduto(99);
+        var produto = new Produto { Id = 1, Nome = "CDB Caixa 2026", Tipo = "CDB", Rentabilidade = 0.12m, Risco = "Baixo" };
 
-        var n = Assert.IsType<NotFoundObjectResult>(result);
-        Assert.Equal("Produto não encontrado.", n.Value);
+        mockProdutoService.Setup(s => s.ObterProduto(1)).ReturnsAsync(produto);
+
+        var controller = new ProdutoController(mockProdutoService.Object, mockTelemetria.Object);
+
+        // Act
+        var result = await controller.GetProduto(1) as OkObjectResult;
+
+        // Assert
+        Assert.NotNull(result);
+        var obj = Assert.IsType<Produto>(result.Value);
+        Assert.Equal("CDB Caixa 2026", obj.Nome);
+        mockTelemetria.Verify(t => t.RegistrarChamada("/api/Produto/produtos/{id}", It.IsAny<long>()), Times.Once);
+    }
+
+    [Fact]
+    public async Task GetProduto_ProdutoInexistente_DeveRetornarNotFound()
+    {
+        // Arrange
+        var mockProdutoService = new Mock<IProdutoService>();
+        var mockTelemetria = new Mock<ITelemetriaService>();
+
+        mockProdutoService.Setup(s => s.ObterProduto(99)).ReturnsAsync((Produto)null);
+
+        var controller = new ProdutoController(mockProdutoService.Object, mockTelemetria.Object);
+
+        // Act
+        var result = await controller.GetProduto(99) as NotFoundObjectResult;
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal("Produto não encontrado.", result.Value);
+        mockTelemetria.Verify(t => t.RegistrarChamada("/api/Produto/produtos/{id}", It.IsAny<long>()), Times.Once);
     }
 }
-

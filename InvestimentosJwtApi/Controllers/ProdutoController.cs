@@ -1,6 +1,8 @@
 ﻿using InvestimentosJwt.Application.ProdutoService;
+using InvestimentosJwt.Application.TelemetriaService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Diagnostics;
 
 namespace InvestimentosJwtApi.Controllers;
 
@@ -12,11 +14,12 @@ namespace InvestimentosJwtApi.Controllers;
 [Route("api/[controller]")]
 public class ProdutoController : ControllerBase
 {
-    private readonly IProdutoService _service;
-
-    public ProdutoController(IProdutoService service)
+    private readonly IProdutoService _produtoService;
+    private readonly ITelemetriaService _telemetriaService;
+    public ProdutoController(IProdutoService produtoService, ITelemetriaService telemetriaService)
     {
-        _service = service;
+        _produtoService = produtoService;
+        _telemetriaService = telemetriaService;
     }
 
     /// <summary>
@@ -27,7 +30,12 @@ public class ProdutoController : ControllerBase
     [HttpGet("produtos")]
     public async Task<IActionResult> GetProdutos()
     {
-        var produtos = await _service.ListarProdutos();
+        var stopwatch = new Stopwatch();
+        stopwatch.Start();
+        var produtos = await _produtoService.ListarProdutos();
+        stopwatch.Stop();
+        var tempoRespostaMs = stopwatch.ElapsedMilliseconds;
+        await _telemetriaService.RegistrarChamada("/api/Produto/produtos", tempoRespostaMs);
         return Ok(produtos);
     }
 
@@ -41,7 +49,12 @@ public class ProdutoController : ControllerBase
     [HttpGet("produtos/{id}")]
     public async Task<IActionResult> GetProduto(int id)
     {
-        var produto = await _service.ObterProduto(id);
+        var stopwatch = new Stopwatch();
+        stopwatch.Start();
+        var produto = await _produtoService.ObterProduto(id);
+        stopwatch.Stop();
+        var tempoRespostaMs = stopwatch.ElapsedMilliseconds;
+        await _telemetriaService.RegistrarChamada("/api/Produto/produtos/{id}", tempoRespostaMs);
         if (produto == null)
             return NotFound("Produto não encontrado.");
 

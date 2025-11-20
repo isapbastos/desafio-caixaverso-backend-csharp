@@ -1,7 +1,10 @@
 ﻿using InvestimentosJwt.Application.SimulacaoService;
 using InvestimentosJwt.Application.SimulacaoService.Models;
+using InvestimentosJwt.Application.TelemetriaService;
+using InvestimentosJwt.Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Diagnostics;
 
 namespace InvestimentosJwtApi.Controllers;
 
@@ -11,10 +14,11 @@ namespace InvestimentosJwtApi.Controllers;
 public class SimulacaoController : ControllerBase
 {
     private readonly ISimulacaoService _simulacaoService;
-
-    public SimulacaoController(ISimulacaoService simulacaoService)
+    private readonly ITelemetriaService _telemetriaService;
+    public SimulacaoController(ISimulacaoService simulacaoService, ITelemetriaService telemetriaService)
     {
         _simulacaoService = simulacaoService;
+        _telemetriaService = telemetriaService;
     }
 
     /// <summary>
@@ -28,8 +32,12 @@ public class SimulacaoController : ControllerBase
     [HttpPost("simular-investimento")]
     public async Task<IActionResult> SimularInvestimento([FromBody]SimulacaoRequest request)
     {
+        var stopwatch = new Stopwatch();
+        stopwatch.Start();
         var resultado = await _simulacaoService.RealizarSimulacao(request);
-
+        stopwatch.Stop();
+        var tempoRespostaMs = stopwatch.ElapsedMilliseconds;
+        await _telemetriaService.RegistrarChamada("/api/Simulacao/simular-investimento", tempoRespostaMs);
         if (!resultado.Sucesso)
             return BadRequest(resultado.Mensagem);
 
@@ -42,7 +50,12 @@ public class SimulacaoController : ControllerBase
     [HttpGet("simulacoes")]
     public async Task<IActionResult> GetSimulacoes()
     {
+        var stopwatch = new Stopwatch();
+        stopwatch.Start(); 
         var simulacoes = await _simulacaoService.ObterTodasSimulacoes();
+        stopwatch.Stop();
+        var tempoRespostaMs = stopwatch.ElapsedMilliseconds;
+        await _telemetriaService.RegistrarChamada("/api/Simulacao/simulacoes", tempoRespostaMs);
         return Ok(simulacoes);
     }
 
@@ -52,7 +65,12 @@ public class SimulacaoController : ControllerBase
     [HttpGet("simulacoes/por-produto-dia")]
     public async Task<IActionResult> GetSimulacoesPorProdutoDia()
     {
+        var stopwatch = new Stopwatch();
+        stopwatch.Start();
         var agregacao = await _simulacaoService.ObterSimulacoesPorProdutoDia();
+        stopwatch.Stop();
+        var tempoRespostaMs = stopwatch.ElapsedMilliseconds;
+        await _telemetriaService.RegistrarChamada("/api/Simulacao/simulacoes/por-produto-dia", tempoRespostaMs);
         return Ok(agregacao);
     }
 }

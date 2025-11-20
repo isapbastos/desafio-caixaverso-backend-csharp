@@ -1,6 +1,9 @@
 ﻿using InvestimentosJwt.Application.PerfilService;
+using InvestimentosJwt.Application.TelemetriaService;
+using InvestimentosJwtApi.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Diagnostics;
 
 namespace InvestimentosJwtApi.Controllers;
 /// <summary>
@@ -11,11 +14,13 @@ namespace InvestimentosJwtApi.Controllers;
 [Route("api/[controller]")]
 public class PerfilController : ControllerBase
 {
-    private readonly IPerfilService _service;
+    private readonly IPerfilService _perfilService;
+    private readonly ITelemetriaService _telemetriaService;
 
-    public PerfilController(IPerfilService service)
+    public PerfilController(IPerfilService perfilService, ITelemetriaService telemetriaService)
     {
-        _service = service;
+        _perfilService = perfilService;
+        _telemetriaService = telemetriaService;
     }
 
     /// <summary>
@@ -27,9 +32,19 @@ public class PerfilController : ControllerBase
     [HttpGet("perfil-risco/{clienteId}")]
     public async Task<IActionResult> GetPerfilRiscoAsync(int clienteId)
     {
-        var (perfil, pontuacao, descricao) = await _service.ObterPerfilRisco(clienteId);
-        return Ok(new { clienteId, perfil, pontuacao, descricao });
+        var (perfil, pontuacao, descricao) = await _perfilService.ObterPerfilRisco(clienteId);
+
+        var dto = new PerfilRiscoDto
+        {
+            ClienteId = clienteId,
+            Perfil = perfil,
+            Pontuacao = pontuacao,
+            Descricao = descricao
+        };
+
+        return Ok(dto);
     }
+
 
     /// <summary>
     /// Retorna produtos recomendados com base no perfil informado.
@@ -40,7 +55,12 @@ public class PerfilController : ControllerBase
     [HttpGet("produtos-recomendados/{perfil}")]
     public async Task<IActionResult> GetProdutosRecomendados(string perfil)
     {
-        var recomendados = await _service.ObterProdutosRecomendados(perfil);
+        var stopwatch = new Stopwatch();
+        stopwatch.Start();
+        var recomendados = await _perfilService.ObterProdutosRecomendados(perfil);
+        stopwatch.Stop();
+        var tempoRespostaMs = stopwatch.ElapsedMilliseconds;
+        await _telemetriaService.RegistrarChamada("/api/Perfil/produtos-recomendados/{perfil}", tempoRespostaMs);
         return Ok(recomendados);
     }
 }

@@ -4,6 +4,6 @@ namespace InvestimentosJwt.Infra.Data.Sql.TelemetriaRepository;
 
 public interface ITelemetriaRepository
 {
-    void AdicionarRegistro(TelemetriaRegistro registro);
-    IEnumerable<TelemetriaRegistro> ObterDadosPorPeriodo(DateTime inicio, DateTime fim);
+    Task AdicionarRegistro(TelemetriaRegistro registro);
+    Task<IEnumerable<TelemetriaRegistro>> ObterDadosPorPeriodo(DateTime inicio, DateTime fim);
 }

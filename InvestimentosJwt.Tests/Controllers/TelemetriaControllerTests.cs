@@ -1,74 +1,43 @@
-﻿using InvestimentosJwt.Application.TelemetriaService;
-using InvestimentosJwtApi.Controllers;
+﻿using Moq;
 using Microsoft.AspNetCore.Mvc;
-using Moq;
+using InvestimentosJwt.Application.TelemetriaService;
+using InvestimentosJwtApi.Controllers;
 
 namespace InvestimentosJwt.Tests.Controllers;
 public class TelemetriaControllerTests
 {
-    private readonly Mock<ITelemetriaService> _mockService;
-    private readonly TelemetriaController _controller;
-
-    public TelemetriaControllerTests()
-    {
-        _mockService = new Mock<ITelemetriaService>();
-        _controller = new TelemetriaController(_mockService.Object);
-    }
-
     [Fact]
-    public void GetTelemetria_DeveRetornarOk_ComRelatorio()
+    public async Task GetTelemetria_DeveRetornarOkComRelatorio()
     {
         // Arrange
-        var inicio = new DateTime(2025, 01, 01);
-        var fim = new DateTime(2025, 01, 31);
+        var mockService = new Mock<ITelemetriaService>();
 
-        var relatorioMock = new
+        var inicio = new DateTime(2025, 10, 1);
+        var fim = new DateTime(2025, 10, 31);
+
+        var relatorio = new
         {
-            servicos = new[]
+            servicos = new List<object>
             {
-                new { nome = "SimulacaoService", quantidadeChamadas = 10, mediaTempoRespostaMs = 120.5 },
-                new { nome = "AuthService", quantidadeChamadas = 5, mediaTempoRespostaMs = 90.2 }
+                new { nome = "simular-investimento", quantidadeChamadas = 120, mediaTempoRespostaMs = 250 },
+                new { nome = "perfil-risco", quantidadeChamadas = 80, mediaTempoRespostaMs = 180 }
             },
-            periodo = new { inicio = "2025-01-01", fim = "2025-01-31" }
+            periodo = new { inicio = "2025-10-01", fim = "2025-10-31" }
         };
 
-        _mockService
-            .Setup(s => s.ObterRelatorio(inicio, fim))
-            .Returns(relatorioMock);
+        mockService.Setup(s => s.ObterRelatorio(inicio, fim)).ReturnsAsync(relatorio);
+
+        var controller = new TelemetriaController(mockService.Object);
 
         // Act
-        var result = _controller.GetTelemetria(inicio, fim);
+        var result = await controller.GetTelemetria(inicio, fim) as OkObjectResult;
 
         // Assert
-        var ok = Assert.IsType<OkObjectResult>(result);
-        Assert.Equal(200, ok.StatusCode);
-        Assert.Equal(relatorioMock, ok.Value);
-
-        _mockService.Verify(s => s.ObterRelatorio(inicio, fim), Times.Once);
-    }
-
-    [Fact]
-    public void GetTelemetria_DeveRetornarOk_MesmoSeRelatorioVazio()
-    {
-        // Arrange
-        var inicio = DateTime.Today.AddDays(-7);
-        var fim = DateTime.Today;
-
-        var relatorioVazio = new
-        {
-            servicos = new object[] { },
-            periodo = new { inicio = inicio.ToString("yyyy-MM-dd"), fim = fim.ToString("yyyy-MM-dd") }
-        };
-
-        _mockService
-            .Setup(s => s.ObterRelatorio(inicio, fim))
-            .Returns(relatorioVazio);
-
-        // Act
-        var result = _controller.GetTelemetria(inicio, fim);
-
-        // Assert
-        var ok = Assert.IsType<OkObjectResult>(result);
-        Assert.Equal(relatorioVazio, ok.Value);
+        Assert.NotNull(result);
+        dynamic obj = result.Value;
+        Assert.Equal(2, obj.servicos.Count);
+        Assert.Equal("simular-investimento", obj.servicos[0].nome);
+        Assert.Equal("2025-10-01", obj.periodo.inicio);
+        Assert.Equal("2025-10-31", obj.periodo.fim);
     }
 }

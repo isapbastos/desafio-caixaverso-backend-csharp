@@ -1,72 +1,60 @@
-﻿using InvestimentosJwt.Application.PerfilService;
+﻿using Moq;
+using Microsoft.AspNetCore.Mvc;
+using InvestimentosJwt.Application.PerfilService;
+using InvestimentosJwt.Application.TelemetriaService;
 using InvestimentosJwt.Domain.Entities;
 using InvestimentosJwtApi.Controllers;
-using Microsoft.AspNetCore.Mvc;
-using Moq;
 
 namespace InvestimentosJwt.Tests.Controllers;
-
 public class PerfilControllerTests
 {
-    private readonly Mock<IPerfilService> _perfilServiceMock;
-    private readonly PerfilController _controller;
-
-    public PerfilControllerTests()
-    {
-        _perfilServiceMock = new Mock<IPerfilService>();
-        _controller = new PerfilController(_perfilServiceMock.Object);
-    }
-
-
-    // ---------------------------------------------------------
-    // TESTE: GET Produtos Recomendados
-    // ---------------------------------------------------------
     [Fact]
-    public async Task GetProdutosRecomendados_DeveRetornar200_ComLista()
+    public async Task GetPerfilRiscoAsync_DeveRetornarOkComPerfilNotNull()
     {
         // Arrange
-        string perfil = "Moderado";
+        var mockPerfilService = new Mock<IPerfilService>();
+        var mockTelemetria = new Mock<ITelemetriaService>();
+
+        mockPerfilService.Setup(s => s.ObterPerfilRisco(123))
+            .ReturnsAsync(("Moderado", 65, "Perfil equilibrado entre segurança e rentabilidade."));
+
+        var controller = new PerfilController(mockPerfilService.Object, mockTelemetria.Object);
+
+        // Act
+        var result = await controller.GetPerfilRiscoAsync(123) as OkObjectResult;
+
+        // Assert
+        Assert.NotNull(result);
+    }
+
+    [Fact]
+    public async Task GetProdutosRecomendados_DeveRetornarOkComLista()
+    {
+        // Arrange
+        var mockPerfilService = new Mock<IPerfilService>();
+        var mockTelemetria = new Mock<ITelemetriaService>();
 
         var produtos = new List<Produto>
         {
-            new Produto { Id = 1, Nome = "CDB", Risco = "médio" },
-            new Produto { Id = 2, Nome = "Tesouro Selic", Risco = "baixo" }
+            new Produto { Id = 1, Nome = "CDB Caixa 2026", Tipo = "CDB", Rentabilidade = 0.12m, Risco = "Baixo" },
+            new Produto { Id = 2, Nome = "Fundo XPTO", Tipo = "Fundo", Rentabilidade = 0.18m, Risco = "Alto" }
         };
 
-        _perfilServiceMock
-            .Setup(s => s.ObterProdutosRecomendados(perfil))
+        mockPerfilService.Setup(s => s.ObterProdutosRecomendados("Moderado"))
             .ReturnsAsync(produtos);
 
+        var controller = new PerfilController(mockPerfilService.Object, mockTelemetria.Object);
+
         // Act
-        var result = await _controller.GetProdutosRecomendados(perfil) as OkObjectResult;
+        var result = await controller.GetProdutosRecomendados("Moderado") as OkObjectResult;
 
         // Assert
         Assert.NotNull(result);
-        Assert.Equal(200, result.StatusCode);
+        var lista = Assert.IsType<List<Produto>>(result.Value);
+        Assert.Equal(2, lista.Count);
+        Assert.Contains(lista, p => p.Nome == "CDB Caixa 2026");
+        Assert.Contains(lista, p => p.Nome == "Fundo XPTO");
 
-        var lista = Assert.IsAssignableFrom<IEnumerable<Produto>>(result.Value);
-        Assert.Equal(2, lista.Count());
-    }
-
-    // ---------------------------------------------------------
-    // TESTE: Perfil inexistente → deve retornar lista vazia (mas 200 OK)
-    // ---------------------------------------------------------
-    [Fact]
-    public async Task GetProdutosRecomendados_PerfilInvalido_DeveRetornarListaVazia()
-    {
-        // Arrange
-        _perfilServiceMock
-            .Setup(s => s.ObterProdutosRecomendados("qualquer"))
-            .ReturnsAsync(new List<Produto>());
-
-        // Act
-        var result = await _controller.GetProdutosRecomendados("qualquer") as OkObjectResult;
-
-        // Assert
-        Assert.NotNull(result);
-        Assert.Equal(200, result.StatusCode);
-
-        var lista = Assert.IsAssignableFrom<IEnumerable<Produto>>(result.Value);
-        Assert.Empty(lista);
+        mockTelemetria.Verify(t => t.RegistrarChamada("/api/Perfil/produtos-recomendados/{perfil}", It.IsAny<long>()), Times.Once);
     }
 }

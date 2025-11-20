@@ -11,20 +11,15 @@ public class TelemetriaService : ITelemetriaService
         _repository = repository;
     }
 
-    public void RegistrarChamada(string nomeServico, long tempoRespostaMs)
+    public async Task RegistrarChamada(string nomeServico, long tempoRespostaMs)
     {
-        var registro = new TelemetriaRegistro
-        {
-            NomeServico = nomeServico,
-            TempoRespostaMs = tempoRespostaMs,
-            DataRegistro = DateTime.UtcNow
-        };
-        _repository.AdicionarRegistro(registro);
+        var registro = new TelemetriaRegistro(nomeServico,tempoRespostaMs);
+        await _repository.AdicionarRegistro(registro);
     }
 
-    public object ObterRelatorio(DateTime inicio, DateTime fim)
+    public async Task<object> ObterRelatorio(DateTime inicio, DateTime fim)
     {
-        var dados = _repository.ObterDadosPorPeriodo(inicio, fim);
+        var dados = await _repository.ObterDadosPorPeriodo(inicio, fim);
         var agrupado = dados
             .GroupBy(d => d.NomeServico)
             .Select(g => new

@@ -40,7 +40,7 @@ public class TelemetriaServiceTests
     // TESTE 2: ObterRelatorio deve agrupar, calcular médias e retornar estrutura correta
     // -----------------------------------------------------------
     [Fact]
-    public void ObterRelatorio_DeveRetornarDadosAgrupados()
+    public async Task ObterRelatorio_DeveRetornarDadosAgrupados()
     {
         // Arrange
         var inicio = new DateTime(2025, 1, 1);
@@ -48,12 +48,12 @@ public class TelemetriaServiceTests
 
         var registros = new List<TelemetriaRegistro>
         {
-            new TelemetriaRegistro { NomeServico = "Auth", TempoRespostaMs = 100, DataRegistro = inicio },
-            new TelemetriaRegistro { NomeServico = "Auth", TempoRespostaMs = 300, DataRegistro = inicio },
-            new TelemetriaRegistro { NomeServico = "Simulacao", TempoRespostaMs = 200, DataRegistro = inicio }
+            new TelemetriaRegistro("Auth", 100, inicio),
+            new TelemetriaRegistro("Auth", 300, inicio),
+            new TelemetriaRegistro("Simulacao", 200, inicio)
         };
 
-        _repoMock.Setup(r => r.ObterDadosPorPeriodo(inicio, fim)).Returns(registros);
+        _repoMock.Setup(r => r.ObterDadosPorPeriodo(inicio, fim)).ReturnsAsync(registros);
 
         // Act
         var resultado = _service.ObterRelatorio(inicio, fim);

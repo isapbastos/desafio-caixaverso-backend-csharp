@@ -1,8 +1,10 @@
+using InvestimentosJwt.Application.InvestimentoService;
 using InvestimentosJwt.Application.PerfilService;
 using InvestimentosJwt.Application.ProdutoService;
 using InvestimentosJwt.Application.SimulacaoService;
 using InvestimentosJwt.Application.TelemetriaService;
 using InvestimentosJwt.Infra.Data.Sql;
+using InvestimentosJwt.Infra.Data.Sql.InvestimentoRepository;
 using InvestimentosJwt.Infra.Data.Sql.ProdutoRepository;
 using InvestimentosJwt.Infra.Data.Sql.SimulacaoRepository;
 using InvestimentosJwt.Infra.Data.Sql.TelemetriaRepository;
@@ -19,15 +21,30 @@ var configuration = builder.Configuration;
 // ------------------------------
 // DATABASE
 // ------------------------------
+
+// Caminho do banco de dados
+var dbPath = Path.Combine(builder.Environment.ContentRootPath, "data", "app.db");
+
+// Cria a pasta se não existir
+Directory.CreateDirectory(Path.GetDirectoryName(dbPath)!);
+
+// Configura DbContext
 builder.Services.AddDbContext<AppDbContext>(options =>
-options.UseSqlite(
-        configuration.GetConnectionString("DefaultConnection"),
-        x => x.MigrationsAssembly("InvestimentosJwt.Infra.Data")
+    options.UseSqlite($"Data Source={dbPath}",
+    x => x.MigrationsAssembly("InvestimentosJwt.Infra.Data")
     ));
+//builder.Services.AddDbContext<AppDbContext>(options =>
+//options.UseSqlite(
+//        configuration.GetConnectionString("DefaultConnection"),
+//        x => x.MigrationsAssembly("InvestimentosJwt.Infra.Data")
+//    ));
 
 // ------------------------------
 // DEPENDENCY INJECTION
 // ------------------------------
+builder.Services.AddScoped<IInvestimentoRepository, InvestimentoRepository>();
+builder.Services.AddScoped<IInvestimentoService, InvestimentoService>();
+
 builder.Services.AddScoped<ISimulacaoRepository, SimulacaoRepository>();
 builder.Services.AddScoped<ISimulacaoService, SimulacaoService>();
 
