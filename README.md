@@ -47,7 +47,7 @@ http://localhost:{port}/swagger/index.html
 ```
 
 ## ⚙️ Estrutura do projeto
-
+```
 /InvestimentosJwtApi.sln
 /docker-compose.yml
 /InvestimentosJwtApi/ <-- Projeto Web API
@@ -55,6 +55,7 @@ http://localhost:{port}/swagger/index.html
 /InvestimentosJwt.Domain/ <-- Entidades e modelos do domínio
 /InvestimentosJwt.Infra.Data/ <-- Repositórios e acesso a dados
 /InvestimentosJwt.Tests/ <-- Repositórios com testes unitários e de integração
+```
 
 ## **Testes**
 Execute:
